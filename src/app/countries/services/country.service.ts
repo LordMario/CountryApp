@@ -15,6 +15,14 @@ export class CountryService {
         
     }
     
+    searchCountryByAlphaCode(cod:string): Observable<Country[]>{
+        return this.http.get<Country[]>(`${this.url}/alpha/${cod}`).pipe(
+            catchError(error=> of([]))
+        );
+    }
+
+
+
     getCapitalByTag(tag:string): Observable<Country[]>{
         return this.http.get<Country[]>(`${this.url}/capital/${tag}`).pipe(
             catchError(error=> of([]))
