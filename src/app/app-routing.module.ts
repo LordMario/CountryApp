@@ -19,8 +19,7 @@ const routes: Routes =[
     },
     {
         path:'**',
-        component: ByCapitalPageComponent
-        
+        loadChildren: () => import('./countries/countries.module').then(m=>m.CountriesModule),
     }
 ];
 
