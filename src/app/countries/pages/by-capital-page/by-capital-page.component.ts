@@ -11,6 +11,7 @@ export class ByCapitalPageComponent {
 
 
   capitales: Country[]=[];
+  isLoading : boolean = false;
 
   constructor(private http: CountryService) {
     
@@ -18,8 +19,10 @@ export class ByCapitalPageComponent {
 
 
   searchByCapital (term :string): void{
+    this.isLoading=true;
     this.http.getCapitalByTag(term).subscribe((resp: Country[])=>{
       this.capitales=resp;
+      this.isLoading=false;
     });
   }
 }
