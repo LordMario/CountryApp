@@ -23,7 +23,7 @@ export class CountryService {
     }
 
     constructor(private http : HttpClient) {
-        
+        this.loadFromLocalStorage();
     }
 
     private getCountryRequest(url :string): Observable<Country[]>{
@@ -43,21 +43,42 @@ export class CountryService {
     getCapitalByTag(term:string): Observable<Country[]>{
         const url = `${this.url}/capital/${term}`
         return this.getCountryRequest(url).pipe(
-            tap(countries => this.cacheStores.byCapital = { term , countries }),
+            tap(countries => {
+                this.cacheStores.byCapital = { term , countries }
+                this.safeToLocalStorage();
+            }),
         );
     }
 
     getCountryByTag(term:string) : Observable<Country[]>{
         const url = `${this.url}/name/${term}`
         return this.getCountryRequest(url).pipe(
-            tap(countries=> this.cacheStores.byCountry= {term ,countries}),
+            tap(countries=>{
+                this.cacheStores.byCountry= {term ,countries}
+                this.safeToLocalStorage();
+            }),
         );
     }
 
     getRegionByTag(term:region) : Observable <Country[]>{
         const url = `${this.url}/region/${term}`
         return this.getCountryRequest(url).pipe(
-            tap(countries=> this.cacheStores.byRegion= {term , countries }),
+            tap(countries=> {
+                this.cacheStores.byRegion= {term , countries };
+                this.safeToLocalStorage();
+            }),
         );
+    }
+
+
+    private safeToLocalStorage(){
+        localStorage.setItem('countries',JSON.stringify(this.cacheStores))
+    }
+
+    loadFromLocalStorage(){
+        const existe =  localStorage.getItem('countries');
+        if(existe){
+            this.cacheStores= JSON.parse(existe);
+        }
     }
 }
