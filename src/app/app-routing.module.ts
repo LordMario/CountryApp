@@ -19,7 +19,6 @@ const routes: Routes =[
     },
     {
         path:'**',
-        redirectTo:'countries',
         component: ByCapitalPageComponent
         
     }
