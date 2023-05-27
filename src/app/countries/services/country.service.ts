@@ -1,7 +1,10 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Country } from '../interfaces/capital';
-import { Observable, catchError, delay, map, of } from 'rxjs';
+
+import { Observable, catchError, map, of, tap } from 'rxjs';
+import { Country } from '../interfaces/capital.interface';
+import { CacheStore } from '../interfaces/cache-store.interface';
+import { region } from '../interfaces/region.type';
 
 @Injectable({
     providedIn: 'root'
@@ -10,6 +13,14 @@ import { Observable, catchError, delay, map, of } from 'rxjs';
 export class CountryService {
 
     url : string='https://restcountries.com/v3.1';
+
+
+    cacheStores: CacheStore={
+        byCapital: {term:'',countries:[]},
+        byCountry:{term:'',countries:[]},
+        byRegion: {countries:[]}
+
+    }
 
     constructor(private http : HttpClient) {
         
@@ -29,18 +40,24 @@ export class CountryService {
         );
     }
 
-    getCapitalByTag(tag:string): Observable<Country[]>{
-        const url = `${this.url}/capital/${tag}`
-        return this.getCountryRequest(url);
+    getCapitalByTag(term:string): Observable<Country[]>{
+        const url = `${this.url}/capital/${term}`
+        return this.getCountryRequest(url).pipe(
+            tap(countries => this.cacheStores.byCapital = { term , countries }),
+        );
     }
 
-    getCountryByTag(tag:string) : Observable<Country[]>{
-        const url = `${this.url}/name/${tag}`
-        return this.getCountryRequest(url);
+    getCountryByTag(term:string) : Observable<Country[]>{
+        const url = `${this.url}/name/${term}`
+        return this.getCountryRequest(url).pipe(
+            tap(countries=> this.cacheStores.byCountry= {term ,countries}),
+        );
     }
 
-    getRegionByTag(tag:string) : Observable <Country[]>{
-        const url = `${this.url}/region/${tag}`
-        return this.getCountryRequest(url);
+    getRegionByTag(term:region) : Observable <Country[]>{
+        const url = `${this.url}/region/${term}`
+        return this.getCountryRequest(url).pipe(
+            tap(countries=> this.cacheStores.byRegion= {term , countries }),
+        );
     }
 }

@@ -1,6 +1,9 @@
 import { Component } from '@angular/core';
-import { Country } from '../../interfaces/capital';
 import { CountryService } from '../../services/country.service';
+import { Country } from '../../interfaces/capital.interface';
+import { region } from '../../interfaces/region.type';
+
+
 
 @Component({
   selector: 'country-by-region-page',
@@ -12,12 +15,21 @@ export class ByRegionPageComponent {
 
   region : Country[]=[];
 
-  constructor(private http: CountryService){
+  regions: region []=['Africa','America','Asia','Europe','Oceania'];
+
+  selectedRegion?: region;
+
+  constructor(private terminoServicio: CountryService){
 
   }
+  ngOnInit(): void {
+    this.region=this.terminoServicio.cacheStores.byRegion.countries;
+    this.selectedRegion = this.terminoServicio.cacheStores.byRegion.term;
+  }
 
-  getRegion(tag : string) : void{
-    this.http.getRegionByTag(tag).subscribe(resp=>{
+  getRegion(tag : region) : void{
+    this.selectedRegion= tag;
+    this.terminoServicio.getRegionByTag(tag).subscribe(resp=>{
       this.region=resp;
     })
   }

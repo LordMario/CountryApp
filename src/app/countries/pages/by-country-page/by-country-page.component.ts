@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { Country } from '../../interfaces/capital';
+import { Country } from '../../interfaces/capital.interface';
 import { HttpClient } from '@angular/common/http';
 import { CountryService } from '../../services/country.service';
 
@@ -11,15 +11,21 @@ import { CountryService } from '../../services/country.service';
 export class ByCountryPageComponent {
 
   paises: Country[]=[]
+  terminoServicio : string='';
 
-
-  constructor(private http : CountryService){
+  constructor(private countryService : CountryService){
 
   }
 
 
+  ngOnInit(): void {
+    this.paises = this.countryService.cacheStores.byCountry.countries;
+    this.terminoServicio = this.countryService.cacheStores.byCountry.term;
+
+  }
+
   getPaises(tag: string):void{
-    this.http.getCountryByTag(tag).subscribe(resp=>{
+    this.countryService.getCountryByTag(tag).subscribe(resp=>{
       this.paises=resp;
     })
   }
