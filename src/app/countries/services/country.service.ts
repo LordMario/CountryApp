@@ -75,7 +75,7 @@ export class CountryService {
         localStorage.setItem('countries',JSON.stringify(this.cacheStores))
     }
 
-    loadFromLocalStorage(){
+    private loadFromLocalStorage(){
         const existe =  localStorage.getItem('countries');
         if(existe){
             this.cacheStores= JSON.parse(existe);
